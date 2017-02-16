@@ -147,31 +147,31 @@ int main(int argc, char *argv[])
 
     /* 終了シグナルが発生していない限りループ */
     while (!terminated) {
-        /* シリアルポートから読み込み */
-        ret = read(serial_fd, buf, BUF_SIZE);
-        if (ret < 0) {
-            /* シグナル発生時はリトライ */
-            if (errno == EINTR)
-                continue;
-            exitfail_errno("read");
-        }
-        len = ret;
-	syslog(LOG_INFO, "READ:");
-	syslog(LOG_INFO, buf);
-
-        /* すべてのデータを書き込むまでループ(終了シグナル発生で中断) */
-        for (wrlen = 0; wrlen < len && !terminated; wrlen += ret) {
-            /* シリアルポートに書き込み */
-            ret = write(serial_fd, buf + wrlen, len - wrlen);
+        char c = 0;
+        int count = 0;
+        const char start = '{';
+        const char end = '}';
+        while (c != start) {
+            ret = read(serial_fd, &c, 1);
             if (ret < 0) {
-                if (errno == EINTR) {
-                    /* シグナル発生時はリトライ */
-                    ret = 0;
-                    continue;
-                }
-                exitfail_errno("write");
+                exitfail_errno("read");
             }
         }
+        while (c != end && count < BUF_SIZE -2) {
+	    ret = read(serial_fd, &c, 1);
+            if (ret < 0) {
+                exitfail_errno("read");
+            }
+            if (c != end) {
+                buf[count] = c;
+                count++;
+            }
+        }
+        buf[count + 1] = '\n';
+        syslog(LOG_INFO, "READ:");
+        syslog(LOG_INFO, buf);
+        // TODO: Send Data to Kii Cloud
+
     }
 
     return EXIT_SUCCESS;
