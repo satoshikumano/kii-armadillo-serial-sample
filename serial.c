@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
                 count++;
             }
         }
-        buf[count + 1] = '\n';
+        buf[count + 1] = '\0';
         syslog(LOG_INFO, "READ:");
         syslog(LOG_INFO, buf);
 	const char* msg = "Message: ";
