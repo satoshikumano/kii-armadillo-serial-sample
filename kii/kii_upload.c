@@ -63,7 +63,24 @@ int upload(const char* message)
     syslog(LOG_INFO, "Authenticate thing succeeded!");
 
     // Upload Object.
-    ret = kii_object_create(&kii, &bucket, EX_OBJECT_DATA, NULL, object_id);
+    memset(object_data, 0x00, sizeof(object_data));
+    const char* json1 = "{\"message\":\"";
+    const size_t json1_len = strlen(json1);
+    const char* json2 = "\"}";
+    const size_t json2_len = strlen(json2);
+    const size_t message_len = strlen(message);
+    const char* fallback = "message too large";
+
+    strncpy(object_data, json1, strlen(json1));
+    if (json1_len + message_len + json2_len > sizeof(object_data)) {
+	// Avoid Overflow.
+    	strncat(object_data, fallback, strlen(fallback));
+    } else {
+    	strncat(object_data, message, strlen(message));
+    }
+    strncat(object_data, json2, strlen(json2));
+    syslog(LOG_INFO, "Payload: %s", object_data);
+    ret = kii_object_create(&kii, &bucket, object_data, NULL, object_id);
     if (ret != 0) {
 	syslog(LOG_WARNING, "Failed to upload object");
 	return ret;

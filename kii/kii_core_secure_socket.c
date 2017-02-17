@@ -12,6 +12,7 @@
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <openssl/bio.h>
 
 #include <syslog.h>
 /* Suppress warnings, because OpenSSL was deprecated in Mac. */
@@ -69,6 +70,12 @@ kii_socket_code_t
     }
 
     SSL_library_init();
+    BIO* bio = BIO_new_socket(sock, BIO_NOCLOSE);
+    if (bio == NULL) {
+        printf("BIO new socket failed.\n");
+        free(ctx);
+        return KII_SOCKETC_FAIL;
+    }
     ssl_ctx = SSL_CTX_new(SSLv23_client_method());
     if (ssl_ctx == NULL){
         printf("failed to init ssl context.\n");
@@ -82,16 +89,8 @@ kii_socket_code_t
         free(ctx);
         return KII_SOCKETC_FAIL;
     }
-
-    /*
-    ret = SSL_set_fd(ssl, sock);
-    if (ret == 0){
-        printf("failed to set fd.\n");
-        free(ctx);
-        return KII_SOCKETC_FAIL;
-    }
-    */
-
+    SSL_set_bio(ssl, bio, bio);
+    SSL_set_connect_state(ssl);
     ret = SSL_connect(ssl);
     if (ret != 1) {
         int sslErr= SSL_get_error(ssl, ret);
