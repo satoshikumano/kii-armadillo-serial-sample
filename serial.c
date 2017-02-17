@@ -12,6 +12,7 @@
 
 #define MAIN_C
 #include "exitfail.h"
+#include "kii_upload.h"
 
 #define SERIAL_BAUDRATE B9600
 
@@ -171,7 +172,10 @@ int main(int argc, char *argv[])
         syslog(LOG_INFO, "READ:");
         syslog(LOG_INFO, buf);
         // TODO: Send Data to Kii Cloud
-
+	int ret = upload(buf);
+	if (ret != 0) {
+            syslog(LOG_WARNING, "Upload failed.");
+	}
     }
 
     return EXIT_SUCCESS;

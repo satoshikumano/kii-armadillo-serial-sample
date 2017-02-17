@@ -9,6 +9,20 @@
 #include <getopt.h>
 #include <syslog.h>
 #include <sys/types.h>
+#include <stdio.h>
+#include <stdarg.h>
+
+#define LOGGER_BUF_SIZE 1024
+static void logger(const char* format, ...)
+{
+    char msg[LOGGER_BUF_SIZE];
+    va_list list;
+    msg[LOGGER_BUF_SIZE-1] = '\0';
+    va_start(list, format);
+    vsprintf(msg, format, list);
+    va_end(list);
+    syslog(LOG_INFO, msg);
+}
 
 int upload(const char* message)
 {
@@ -30,6 +44,7 @@ int upload(const char* message)
     kii.kii_core.http_context.buffer = buffer;
     kii.kii_core.http_context.buffer_size = buffer_size;
     kii.kii_core.http_context.socket_context.app_context = NULL;
+    kii.kii_core.logger_cb = logger;
 
     // Prepare bucket.
     memset(&bucket, 0x00, sizeof(kii_bucket_t));

@@ -13,6 +13,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+#include <syslog.h>
 /* Suppress warnings, because OpenSSL was deprecated in Mac. */
 #ifdef __APPLE__
 #pragma GCC diagnostic push
@@ -115,7 +116,7 @@ kii_socket_code_t
     if (ret > 0) {
         return KII_SOCKETC_OK;
     } else {
-        printf("failed to send\n");
+        syslog(LOG_WARNING, "core.failed to send");
         return KII_SOCKETC_FAIL;
     }
 }
@@ -132,8 +133,13 @@ kii_socket_code_t
         *out_actual_length = ret;
         return KII_SOCKETC_OK;
     } else {
-        printf("failed to receive:\n");
-        /* TOOD: could be 0 on success? */
+        *out_actual_length = 0;
+	int ssl_error = SSL_get_error(ctx->ssl, ret);
+	if (ssl_error == SSL_ERROR_WANT_READ) {
+            syslog(LOG_WARNING, "core.want_read");
+	    return KII_SOCKETC_OK;
+	}
+        syslog(LOG_WARNING, "core.failed to recv. ssl_error %d", ssl_error);
         *out_actual_length = 0;
         return KII_SOCKETC_FAIL;
     }
