@@ -152,6 +152,11 @@ int main(int argc, char *argv[])
         int count = 0;
         const char start = '{';
         const char end = '}';
+	const char* start_message = "Input message bracketed with {}\n";
+	const char* upload_message = "Uploading...\n";
+	const char* success_message = "Upload done!\n";
+
+	write(serial_fd, start_message, strlen(start_message));
         while (c != start) {
             ret = read(serial_fd, &c, 1);
             if (ret < 0) {
@@ -171,11 +176,18 @@ int main(int argc, char *argv[])
         buf[count + 1] = '\n';
         syslog(LOG_INFO, "READ:");
         syslog(LOG_INFO, buf);
-        // TODO: Send Data to Kii Cloud
+	const char* msg = "Message: ";
+	write(serial_fd, msg, strlen(msg)); 
+	write(serial_fd, buf, count);
+	write(serial_fd, "\n", 1);
+
+	write(serial_fd, upload_message, strlen(upload_message));
+        // Send Data to Kii Cloud
 	int ret = upload(buf);
 	if (ret != 0) {
             syslog(LOG_WARNING, "Upload failed.");
 	}
+	write(serial_fd, success_message, strlen(success_message));
     }
 
     return EXIT_SUCCESS;
