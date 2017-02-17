@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <syslog.h>
+#include <errno.h>
 
 #define MAIN_C
 #include "exitfail.h"
@@ -36,6 +37,7 @@ static void terminate_sig_handler(__unused int signum)
 {
     /* 終了シグナル発生を記録 */
     terminated = 1;
+    syslog(LOG_INFO, "teminated");
 }
 
 /**
@@ -183,11 +185,16 @@ int main(int argc, char *argv[])
 
 	write(serial_fd, upload_message, strlen(upload_message));
         // Send Data to Kii Cloud
-	int ret = upload(buf);
+	ret = upload(buf);
 	if (ret != 0) {
             syslog(LOG_WARNING, "Upload failed.");
 	}
-	write(serial_fd, success_message, strlen(success_message));
+	ret = write(serial_fd, success_message, strlen(success_message));
+	if (ret < 0) {
+            syslog(LOG_WARNING, "write failed. errno: %d", errno);
+	} else {
+            syslog(LOG_INFO, "write success. len: %d", ret);
+	}
     }
 
     return EXIT_SUCCESS;

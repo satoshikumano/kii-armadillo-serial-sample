@@ -83,12 +83,14 @@ kii_socket_code_t
         return KII_SOCKETC_FAIL;
     }
 
+    /*
     ret = SSL_set_fd(ssl, sock);
     if (ret == 0){
         printf("failed to set fd.\n");
         free(ctx);
         return KII_SOCKETC_FAIL;
     }
+    */
 
     ret = SSL_connect(ssl);
     if (ret != 1) {
@@ -116,6 +118,11 @@ kii_socket_code_t
     if (ret > 0) {
         return KII_SOCKETC_OK;
     } else {
+	int ssl_error = SSL_get_error(ctx->ssl, ret);
+	if (ssl_error == SSL_ERROR_WANT_READ || ssl_error == SSL_ERROR_WANT_WRITE) {
+            syslog(LOG_INFO, "core.send.want_read_write");
+	    return KII_SOCKETC_AGAIN;
+	}
         syslog(LOG_WARNING, "core.failed to send");
         return KII_SOCKETC_FAIL;
     }
@@ -135,12 +142,15 @@ kii_socket_code_t
     } else {
         *out_actual_length = 0;
 	int ssl_error = SSL_get_error(ctx->ssl, ret);
-	if (ssl_error == SSL_ERROR_WANT_READ) {
-            syslog(LOG_WARNING, "core.want_read");
-	    return KII_SOCKETC_OK;
+	if (ssl_error == SSL_ERROR_WANT_READ || ssl_error == SSL_ERROR_WANT_WRITE) {
+            syslog(LOG_INFO, "core.read.want_read_write");
+	    return KII_SOCKETC_AGAIN;
+	}
+	if (ssl_error == SSL_ERROR_ZERO_RETURN) {
+            syslog(LOG_INFO, "core.zero_return");
+            return KII_SOCKETC_OK;
 	}
         syslog(LOG_WARNING, "core.failed to recv. ssl_error %d", ssl_error);
-        *out_actual_length = 0;
         return KII_SOCKETC_FAIL;
     }
 }
