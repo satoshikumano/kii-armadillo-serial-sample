@@ -1,15 +1,30 @@
 LIBS = -lkiisdk -lkiiuploader -lpthread -lssl -lcrypto
-LIBDIRS = -L./kii -L/usr/arm-linux-gnueabi/lib
-INCLUDES = -I./kii -I/usr/arm-linux-gnueabi/include/openssl
-SOURCES = serial.c
-CC = arm-linux-gnueabi-gcc
+LIBDIRS = -L./kii
+ARM_LIBDIRS = -L/usr/arm-linux-gnueabi/lib -L./kii/libs/arm
+AMD64_LIBDIRS = -L/usr/lib/x86_64-linux-gnu -L./kii/libs/amd64
 
-build:
-	$(CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(INCLUDES) -o serial-sample
+INCLUDES = -I./kii
+ARM_INCLUDES = -I/usr/arm-linux-gnueabi/include/openssl
+AMD64_INCLUDES = -I/usr/include/openssl
+
+SOURCES = $(wildcard *.c)
+ARM_CC = arm-linux-gnueabi-gcc
+AMD64_CC = gcc
+
+TARGET = serial-sample
+TARGET_IP = 10.5.250.103
+
+build-arm:
+	$(MAKE) -C kii $@
+	$(ARM_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(ARM_LIBDIRS) $(INCLUDES) $(ARM_INCLUDES) -o serial-sample
+
+build-amd64:
+	$(MAKE) -C kii $@
+	$(AMD64_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(AMD64_LIBDIRS) $(INCLUDES) $(AMD64_INCLUDES) -o serial-sample
 
 transfer:
-	lftp -u ftp, 10.5.250.103 -e "cd pub; put serial-sample; put exitfail.h;quit"
+	lftp -u ftp, $(TARGET_IP) -e "cd pub; put $(TARGET); put exitfail.h;quit"
 
 transfer-kii:
 	cd kii && \
-	lftp -u ftp, 10.5.250.103 -e "mkdir -p pub/kii; cd pub/kii; put libkiisdk.so; put libkiiuploader.so; put kii.h; put kii_upload.h; quit"
+	lftp -u ftp, $(TARGET_IP) -e "mkdir -p pub/kii; cd pub/kii; put libs/arm/libkiisdk.so; put libkiiuploader.so; put kii.h; put kii_upload.h; quit"
