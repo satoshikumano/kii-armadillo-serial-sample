@@ -41,7 +41,7 @@ Armadillo-IoTが起動したらrootでログインしておきます。
 
 ifconfig を実行しArmadillo-IoTに割り当てられたIPアドレスを確認しておきます。
 ```shell
-ifconfig
+$ifconfig
 ```
 
 ### ATDE のインストール
@@ -57,14 +57,54 @@ atmark のユーザーでログインしてホームディレクトリに作業�
 
 
 ```shell
-mkdir work
-cd work
+$mkdir work
+$cd work
 ```
 
 Githubからソースコードを取得します
 
 ```shell
-git clone https://github.com/satoshikumano/kii-armadillo-serial-sample.git
+$git clone https://github.com/satoshikumano/kii-armadillo-serial-sample.git
 ```
 
-#### Kii Cloudのアプリケーション設定
+#### Kii Cloudのアプリケーションの設定
+
+[Kii Developer console](https://developer.kii.com/v2/apps) に移動してアプリケーションを作成します。<br>
+アプリケーション名・サーバーロケーション・プラットフォームは任意の値を選択可能ですが<br>
+
+このチュートリアルではサーバーロケーション：Japanを選択します。<br>
+
+作成が完了したらアプリケーションのIDとKeyを確認しておきます。<br>
+
+[IDとKeyの確認](http://docs.kii.com/ja/guides/devportal/application_console/#アプリの設定)
+
+##### Thingの作成
+
+Developer consoleでThingを作成しておきます。
+![thingの作成](https://www.evernote.com/l/AFLQ74UgqVxNJoc8WN4QZom5gd6RQpix4-cB/image.png)
+
+
+##### アプリケーションの設定変更
+```shell
+$cd kii-armadillo-serial-sample
+$vi kii/kii_upload.h
+```
+
+kii_upload.hを編集します。
+EX_AUTH_VENDOR_ID、EX_AUTH_VENDOR_IDの値を [Thingの作成](Thingの作成) で設定したvendor thing id/ passwordに置き換えます。<br>
+
+EX_APP_ID、EX_APP_KEYに作成したKii CloudアプリケーションのID、Keyをそれぞれ設定します。
+(アプリケーションの作成時にJapan以外のサーバーロケーションを選択した場合はEX_APP_SITEの文字列の変更が必要です。)
+
+##### Armadilo-IoTのIPアドレス設定
+
+```shell
+$vi Makefile
+```
+
+`TARGET_IP` の値を`ifconfig` で調べたIPアドレスに置き換えます。
+
+##### ビルドと転送
+```shell
+$make 
+```
