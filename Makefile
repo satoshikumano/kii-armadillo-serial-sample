@@ -14,15 +14,18 @@ AMD64_CC = gcc
 TARGET = serial-sample
 TARGET_IP = 10.5.250.103
 
+all: transfer
 build-arm:
 	$(MAKE) -C kii $@
-	$(ARM_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(ARM_LIBDIRS) $(INCLUDES) $(ARM_INCLUDES) -o serial-sample
+	$(ARM_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(ARM_LIBDIRS) $(INCLUDES) $(ARM_INCLUDES) -o $(TARGET)
 
 build-amd64:
 	$(MAKE) -C kii $@
-	$(AMD64_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(AMD64_LIBDIRS) $(INCLUDES) $(AMD64_INCLUDES) -o serial-sample
+	$(AMD64_CC) $(SOURCES) $(LIBS) $(LIBDIRS) $(AMD64_LIBDIRS) $(INCLUDES) $(AMD64_INCLUDES) -o $(TARGET)
 
-transfer:
+transfer: build-arm transfer-app transfer-kii
+
+transfer-app:
 	lftp -u ftp, $(TARGET_IP) -e "cd pub; put $(TARGET); put exitfail.h;quit"
 
 transfer-kii:
