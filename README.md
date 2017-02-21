@@ -3,6 +3,7 @@
 Armadillo-IoTゲートウェイ上で動作するサンプルアプリケーションです。
 シリアルから入力された文字列をKii Cloudにアップロードします。
 
+(このサンプルコードはArmadillo-IoTゲートウェイの開発者サイトで公開されている、C言語による実践プログラミング [シリアルポートの入出力](http://manual.atmark-techno.com/armadillo-guide/armadillo-guide-2_ja-2.1.0/ch06.html#sec_using_serial_port)をベースにしています。)
 
 ## 1. 要件
 - Armadillo-IoTゲートウェイ<br>
