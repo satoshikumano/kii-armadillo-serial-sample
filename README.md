@@ -168,4 +168,4 @@ Input message bracketed with {}
 Developer consoleからデータブラウザにアクセスして
 アップロードされたデータを確認します。
 
-![操作方法](https://www.dropbox.com/s/i3sxg5iemxoyxc5/%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95.gif)
+![操作方法](image/data-browser.gif)
