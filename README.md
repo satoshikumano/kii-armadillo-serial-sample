@@ -169,4 +169,8 @@ Input message bracketed with {}
 Developer consoleからデータブラウザにアクセスして
 アップロードされたデータを確認します。
 
+Thing Scope を選択して、
+[2.3.3. Thingの作成](#233-thingの作成-developer-console上での操作)で指定したvendor thing idを入力します。データがアップロードされていれば`my_bucket`という名前のバケットが作成されますので、バケットを選択しオブジェクトを閲覧します。
+
+
 ![操作方法](image/data-browser.gif)
