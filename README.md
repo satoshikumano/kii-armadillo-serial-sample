@@ -24,10 +24,10 @@ iBUFFALO USBシリアルケーブル(USBtypeA to D-sub9ピン)0.5m ブラック�
 
 ## 2. 準備
 
-### 2.1 Tera Termのインストール
+### 2.1. Tera Termのインストール
 WindowsマシンにTera Termをインストールします。
 
-### 2.2 Armadillo-IoT の起動
+### 2.2. Armadillo-IoT の起動
 
 デバッグシリアルケーブルとWindowsマシンを接続します。<br>
 [4.4章](http://manual.atmark-techno.com/armadillo-iot/armadillo-iotg-std_product_manual_ja-2.8.0/ch04.html#sct.connect-method)を参照。
@@ -50,7 +50,7 @@ ifconfig を実行しArmadillo-IoTに割り当てられたIPアドレスを確�
 $ ifconfig
 ```
 
-### 2.3 ATDE のインストールとクロスコンパイル
+### 2.3. ATDE のインストールとクロスコンパイル
 
 [第４章](http://manual.atmark-techno.com/armadillo-iot/armadillo-iotg-std_product_manual_ja-2.8.0/ch04.html)
 を参考にしてATDEをインストールしてください。
