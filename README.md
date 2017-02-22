@@ -98,7 +98,7 @@ $ vi kii/kii_upload.h
 ```
 
 kii_upload.hを編集します。
-EX_AUTH_VENDOR_ID、EX_AUTH_VENDOR_IDの値を [Thingの作成](#Thingの作成) で設定したvendor thing id/ passwordに置き換えます。<br>
+EX_AUTH_VENDOR_ID、EX_AUTH_VENDOR_IDの値を [Thingの作成](#233-thingの作成-developer-console上での操作) で設定したvendor thing id/ passwordに置き換えます。<br>
 
 EX_APP_ID、EX_APP_KEYに作成したKii CloudアプリケーションのID、Keyをそれぞれ設定します。
 (アプリケーションの作成時にJapan以外のサーバーロケーションを選択した場合はEX_APP_SITEの文字列の変更が必要です。)
